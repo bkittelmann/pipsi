@@ -90,6 +90,7 @@ class Repo(object):
     def find_scripts(self, virtualenv, package):
         prefix = os.path.normpath(os.path.realpath(os.path.join(
             virtualenv, 'bin'))) + '/'
+        package_name = package.split("#egg=")[-1]
 
         from subprocess import Popen, PIPE
         files = Popen([prefix + 'python', '-c', r'''if 1:
@@ -116,7 +117,7 @@ class Repo(object):
                 if parser.has_section('console_scripts'):
                     for name, _ in parser.items('console_scripts'):
                         print(os.path.join(%(prefix)r, name))
-            ''' % {'pkg': package, 'prefix': prefix}],
+            ''' % {'pkg': package_name, 'prefix': prefix}],
             stdout=PIPE).communicate()[0].splitlines()
 
         for filename in files:
